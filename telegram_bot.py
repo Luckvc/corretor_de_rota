@@ -15,21 +15,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     new_file = await update.message.effective_attachment.get_file()
-    print(update.message.effective_attachment.file_name)
-    print("File recieved")
-    await new_file.download_to_drive('downloaded_file.xlsx')
-    print("File downloaded")
-    processed_df = arrange_data.process_data('downloaded_file.xlsx')
-    print("Data processed")
-    processed_df.to_excel('processed_data.xlsx', index=False)
-    print("Data Saved")
+    raw_file_name = update.message.effective_attachment.file_name
+    print(raw_file_name)
+    raw_file_path = 'data/raw/' + raw_file_name
+    print(raw_file_path)
+    await new_file.download_to_drive(raw_file_path)
+    processed_df = arrange_data.process_data(raw_file_path)
+    print('data/processed/' + raw_file_name + '_corrigido')
+    processed_file_path = 'data/processed/corrigido_' + raw_file_name
+    processed_df.to_excel(processed_file_path, index=False)
 
     retry_count = 10
     attempt = 0
     success = False
     while attempt < retry_count and not success:
         try:
-            await context.bot.send_document(chat_id=update.effective_chat.id, document='processed_data.xlsx')
+            await context.bot.send_document(chat_id=update.effective_chat.id, document=processed_file_path)
             print("Data sent")
             success = True
         except Exception as e:

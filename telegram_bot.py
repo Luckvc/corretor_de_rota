@@ -26,7 +26,7 @@ Digite /planilha caso ainda não sabia baixar a planilha do aplicativo Driver Sh
     await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 async def planilha(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = """Para baixar a planilha é simples, abra o seu aplicativo.
+    message = """Para baixar a planilha siga os seguintes passos, abra o seu aplicativo.
         1. Vá na aba de entregas pentendes, onde aparecem todos os pedidos a serem entregues.
         2. Bem ao lado direito do botão de Mostrar no Mapa, tem o botão de baixar planilha.
         3. Com a planilha baixada, é só compartilhar o arquivo nessa conversa pelo botão de clips de papel."""
@@ -35,7 +35,7 @@ async def planilha(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     new_file = await update.message.effective_attachment.get_file()
     raw_file_name = update.message.effective_attachment.file_name
-    raw_file_path = 'data/raw/' + raw_file_name
+    raw_file_path = 'data/original/' + raw_file_name
     await new_file.download_to_drive(raw_file_path)
 
     processed_df = arrange_data.process_data(raw_file_path)

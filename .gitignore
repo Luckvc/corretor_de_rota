@@ -4,5 +4,10 @@ __pycache__/
 
 credentials.py
 
-data/
+data/original/*
+data/processed/*
+
+!data/original/.gitkeep 
+!data/processed/.gitkeep 
+
 .idea/

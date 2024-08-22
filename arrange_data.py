@@ -1,27 +1,16 @@
-import pandas as pd
-import json
-import requests
-from io import BytesIO
-import code
+import polars as pl
 
-def open_ceps_json():
-  with open('ceps.json', 'r', encoding='utf-8') as file:
-    return json.load(file)
-
-def save_ceps_json(data):
-  with open('ceps.json', 'w', encoding='utf-8') as file:
-    json.dump(data, file, indent=4)
+def open_ceps_csv(first_cep_number):
+  with open("ceps_db/ceps_" + first_cep_number + ".csv", 'r', encoding='utf-8') as file:
+    return pl.read_csv(file, encoding='utf-8', separator=';')
 
 def get_street_name(cep):
-  internal_storage = open_ceps_json()
-  street_name = internal_storage.get(cep)
-  if street_name is not None:
-    return street_name
+  internal_storage = open_ceps_csv(cep[0])
 
-  street_name = requests.get('https://viacep.com.br/ws/' + cep + '/json/').json()['logradouro']
-  if street_name != '':
-    internal_storage[cep] = street_name
-    save_ceps_json(internal_storage)
+  try: street_name = internal_storage.row(by_predicate=(pl.col("cep") == cep))[1]
+  except pl.exceptions.NoRowsReturnedError: street_name = ''
+
+  if street_name is None: street_name = ''
 
   return street_name
 
@@ -29,7 +18,6 @@ def remove_name_abbreviations(street_name):
     words = street_name.split()
     filtered_words = [word for word in words if len(word) > 1]
 
-    # Join the filtered words back into a string
     filtered_street_name = ' '.join(filtered_words)
 
     return filtered_street_name
@@ -48,28 +36,47 @@ def correct_street_name(street_name):
 
 def package_count(sequence):
    return len(sequence.split(','))
+
+def aggregate_sequences(sequences):
+  return ', '.join(map(str, sequences))
    
 
 def process_data(file_path):
-  df = pd.read_excel(file_path)
+  df = pl.read_excel(file_path)
 
-  df.drop(['Latitude', 'Longitude'], axis=1, inplace=True)
-  df[['Address line 1', 'Address line 2', 'Complemento']] = df['Destination Address'].str.split(',', n=2, expand=True)
-  df.drop(['Destination Address', 'AT ID', 'Stop', 'SPX TN'], axis=1, inplace=True)
-    
-  viacep_streets = df['Zipcode/Postal code'].apply(get_street_name)
+  df = df.drop(['Latitude', 'Longitude', 'AT ID', 'Stop', 'SPX TN'])
 
-  df['Address line 1'] = viacep_streets.mask(viacep_streets == '', df['Address line 1'].apply(correct_street_name))
+  df = df.with_columns(
+    pl.col("Destination Address")
+    .str.split_exact(",", 3)
+    .struct.rename_fields(['Address line 1', 'Address line 2', 'Complemento'])
+    .alias("Destination Address")
+  ).unnest("Destination Address")
 
-  def aggregate_sequences(sequences):
-    return ', '.join(map(str, sequences))
+  df = df.with_columns(
+    pl.col('Zipcode/Postal code').map_elements(function=get_street_name, return_dtype=str).alias('database_streets')
+  )
 
-  grouped_df = df.groupby(['Address line 1', 'Address line 2'], sort=False).agg({'Complemento': 'first', 'Bairro': 'first', 'City': 'first', 'Zipcode/Postal code': 'first', 'Sequence': aggregate_sequences}).reset_index()
+  df = df.with_columns(
+      pl.when(pl.col('database_streets') == '')
+      .then(pl.col('Address line 1').map_elements(correct_street_name, return_dtype=str))
+      .otherwise(pl.col('database_streets'))
+      .alias('Address line 1')
+  )
 
-  grouped_df['Qtd. Pacotes'] = grouped_df['Sequence'].apply(package_count)
-  grouped_df.rename(columns={"Sequence": "N° dos Pacotes", "Bairro": "Neighborhood"}, inplace=True)
+  grouped_df = df.group_by(['Address line 1', 'Address line 2']).agg([pl.first('Complemento'), pl.first('Bairro'),
+                                                                      pl.first('City'), pl.first('Zipcode/Postal code'),
+                                                                      pl.col('Sequence')])
+  grouped_df = grouped_df.with_columns(
+    pl.col('Sequence').map_elements(aggregate_sequences, str).alias('Sequence')
+  )
+  grouped_df = grouped_df.with_columns(
+    pl.col('Sequence').map_elements(package_count, int).alias('Qtd. Pacotes')
+  )
 
-  cols = ['Qtd. Pacotes', 'N° dos Pacotes', 'Address line 1', 'Address line 2', 'Complemento',  'Neighborhood', 'City', 'Zipcode/Postal code']
+  grouped_df = grouped_df.rename({"Sequence": "N° dos Pacotes", "Bairro": "Neighborhood"})
+
+  cols = ['Qtd. Pacotes', 'N° dos Pacotes', 'Address line 1', 'Address line 2', 'Complemento',
+          'Neighborhood', 'City', 'Zipcode/Postal code']
   grouped_df = grouped_df[cols]
-
   return grouped_df

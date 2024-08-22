@@ -11,3 +11,7 @@ data/processed/*
 !data/processed/.gitkeep 
 
 .idea/
+
+test.py
+testing.ipynb
+testing.xlsx

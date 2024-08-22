@@ -1,6 +1,7 @@
 import logging
 import arrange_data
 import time
+import polars as pl
 from credentials import TELEGRAM_API_KEY 
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
@@ -40,9 +41,9 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     processed_df = arrange_data.process_data(raw_file_path)
     processed_file_path = 'data/processed/corrigido_' + raw_file_name
-    processed_df.to_excel(processed_file_path, index=False)
+    processed_df.write_excel(processed_file_path, autofit=True)
 
-    retry_count = 10
+    retry_count = 30
     attempt = 0
     success = False
     while attempt < retry_count and not success:
@@ -53,7 +54,7 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
         except Exception as e:
             attempt += 1
             print(f"Attempt {attempt} failed with error: {e}")
-            time.sleep(1)  # Optional: wait for a second before retrying
+            time.sleep(0.25)
 
     if not success:
         print("Failed to execute the command after 10 attempts.")

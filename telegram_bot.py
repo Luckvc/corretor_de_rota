@@ -7,6 +7,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
 logging.basicConfig(
+    filename='log.txt',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
@@ -15,11 +16,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = """
         Olá, bem vindo ao corretor de rota Shopee!
     
-Esse robô ainda está em fase de testes, peço paciência e qualquer problema peço que me procurem, meu nome é Lucas e estarei divulgando o robô no grupo.
+Esse robô ainda está em fase de testes, pedimos paciência e qualquer problema entre em contato no /help.
 
-O intuito desse robô é melhorar a roterização de aplicativos como o Circuit, mas notem que podem ocorrer discrepancias caso o cliente tenha colocado o CEP errado.
+O intuito desse robô é melhorar a roterização de aplicativos como o Circuit, mas notem que podem ocorrer discrepâncias caso o cliente tenha colocado o CEP errado.
 
-Para utilizar o robô é só compartilhar a planilha baixada do aplicatiov Driver Shopee. Depois abrir a planilha com o Circuit ou aplicativo de sua preferência, eu geralmente seleciono para aparecer as seguintes colunas: Qtd de Pacotes, Número dos pacotes e Complemento.
+Para utilizar o robô é só compartilhar a planilha baixada do aplicativo Driver Shopee. Depois abrir a planilha com o Circuit ou aplicativo de sua preferência, eu geralmente seleciono para aparecer as seguintes colunas: Qtd de Pacotes, Número dos pacotes e Complemento.
 
 Note que pode demorar 1 ou 2 minutos para processar a planilha.
 
@@ -28,9 +29,13 @@ Digite /planilha caso ainda não sabia baixar a planilha do aplicativo Driver Sh
 
 async def planilha(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = """Para baixar a planilha siga os seguintes passos, abra o seu aplicativo.
-        1. Vá na aba de entregas pentendes, onde aparecem todos os pedidos a serem entregues.
+        1. Vá na aba de entregas pentendes, onde aparece todos os pedidos a serem entregues.
         2. Bem ao lado direito do botão de Mostrar no Mapa, tem o botão de baixar planilha.
         3. Com a planilha baixada, é só compartilhar o arquivo nessa conversa pelo botão de clips de papel."""
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = """Qualquer problema ou sugestão, favor entrar em contato via whatsapp: (43) 98815-6626"""
     await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -58,13 +63,14 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not success:
         print("Failed to execute the command after 10 attempts.")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Não foi possível processar a planilha")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Não foi possível processar a planilha, tente novamente. Caso persistir entre em contato no /help")
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(TELEGRAM_API_KEY).build()
 
     application.add_handler(CommandHandler('planilha', planilha))
     application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('help', help))
     application.add_handler(MessageHandler(filters.TEXT, start))
 
 

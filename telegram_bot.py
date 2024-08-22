@@ -74,8 +74,9 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         processed_df = arrange_data.process_data(raw_file_path)
     except Exception as e: 
-        logging.log(logging.ERROR, "arquivo " + raw_file_name + " não foi processado, erro: " + str(e))
+        logging.log(logging.ERROR, "arquivo " + raw_file_name + " não foi processado, erro: " + repr(e))
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Não foi possível processar a planilha, verifique se enviou o arquivo correto e tente novamente. Caso persistir entre em contato no /help")
+        return
     
     processed_file_path = 'data/processed/corrigido_' + raw_file_name
     processed_df.write_excel(processed_file_path, autofit=True)
@@ -96,7 +97,7 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
             time.sleep(0.25)
 
     if not success:
-        logging.log(logging.ERROR, "arquivo " + raw_file_name + " não foi enviado, erro: " + str(last_error))
+        logging.log(logging.ERROR, "arquivo " + raw_file_name + " não foi enviado, erro: " + repr(last_error))
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Não foi possível enviar a planilha processada, tente novamente. Caso persistir entre em contato no /help")
 
 if __name__ == '__main__':

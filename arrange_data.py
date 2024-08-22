@@ -3,7 +3,7 @@ import polars as pl
 def open_ceps_csv(first_cep_number):
   with open("ceps_db/ceps_" + first_cep_number + ".csv", 'r', encoding='utf-8') as file:
     return pl.read_csv(file, encoding='utf-8', separator=';')
-# cep;logradouro
+
 def get_street_name(cep):
   internal_storage = open_ceps_csv(cep[0])
 
@@ -18,7 +18,6 @@ def remove_name_abbreviations(street_name):
     words = street_name.split()
     filtered_words = [word for word in words if len(word) > 1]
 
-    # Join the filtered words back into a string
     filtered_street_name = ' '.join(filtered_words)
 
     return filtered_street_name

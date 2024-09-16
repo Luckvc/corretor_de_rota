@@ -68,7 +68,7 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     new_file = await update.message.effective_attachment.get_file()
     raw_file_name = update.message.effective_attachment.file_name
     logging.log(logging.WARNING, "arquivo " + raw_file_name + " recebido de chat_id: " + str(update.effective_chat.id))
-    raw_file_path = 'data/original/' + raw_file_name
+    raw_file_path = 'app/data/original/' + raw_file_name
     await new_file.download_to_drive(raw_file_path)
 
     try:
@@ -78,7 +78,7 @@ async def doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Não foi possível processar a planilha, verifique se enviou o arquivo correto e tente novamente. Caso persistir entre em contato no /help")
         return
     
-    processed_file_path = 'data/processed/corrigido_' + raw_file_name
+    processed_file_path = 'app/data/processed/corrigido_' + raw_file_name
     processed_df.write_excel(processed_file_path, autofit=True)
 
     retry_count = 30

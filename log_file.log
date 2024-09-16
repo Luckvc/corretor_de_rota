@@ -1,0 +1,43 @@
+2024-09-16 20:22:06,309 - root - WARNING - arquivo 13-09-2024 Lucas Vasques Campos.xlsx recebido de chat_id: 7094619156
+2024-09-16 20:22:06,551 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/telegram/ext/_application.py", line 1277, in process_update
+    await coroutine
+  File "/usr/local/lib/python3.12/site-packages/telegram/ext/_handlers/basehandler.py", line 157, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/telegram_bot.py", line 72, in doc
+    await new_file.download_to_drive(raw_file_path)
+  File "/usr/local/lib/python3.12/site-packages/telegram/_files/file.py", line 215, in download_to_drive
+    filename.write_bytes(buf)
+  File "/usr/local/lib/python3.12/pathlib.py", line 1036, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'data/original/13-09-2024 Lucas Vasques Campos.xlsx'
+2024-09-16 20:27:16,971 - root - WARNING - arquivo 13-09-2024 Lucas Vasques Campos.xlsx recebido de chat_id: 7094619156
+2024-09-16 20:27:17,210 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/telegram/ext/_application.py", line 1277, in process_update
+    await coroutine
+  File "/usr/local/lib/python3.12/site-packages/telegram/ext/_handlers/basehandler.py", line 157, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/telegram_bot.py", line 72, in doc
+    await new_file.download_to_drive(raw_file_path)
+  File "/usr/local/lib/python3.12/site-packages/telegram/_files/file.py", line 215, in download_to_drive
+    filename.write_bytes(buf)
+  File "/usr/local/lib/python3.12/pathlib.py", line 1036, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'data/original/13-09-2024 Lucas Vasques Campos.xlsx'
+2024-09-16 20:29:43,737 - root - WARNING - arquivo 13-09-2024 Lucas Vasques Campos.xlsx recebido de chat_id: 7094619156
+2024-09-16 20:35:11,163 - root - WARNING - arquivo 13-09-2024 Lucas Vasques Campos.xlsx recebido de chat_id: 7094619156
+2024-09-16 20:35:19,050 - root - WARNING - arquivo 13-09-2024 Lucas Vasques Campos.xlsx enviado
+2024-09-16 20:36:38,949 - root - WARNING - arquivo 14-09-2024 Lucas Vasques Campos.xlsx recebido de chat_id: 7094619156
+2024-09-16 20:36:40,540 - root - WARNING - arquivo 14-09-2024 Lucas Vasques Campos.xlsx enviado

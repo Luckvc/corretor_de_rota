@@ -1,7 +1,7 @@
 import polars as pl
 
 def open_ceps_csv(first_cep_number):
-  with open("ceps_db/ceps_" + first_cep_number + ".csv", 'r', encoding='utf-8') as file:
+  with open("app/ceps_db/ceps_" + first_cep_number + ".csv", 'r', encoding='utf-8') as file:
     return pl.read_csv(file, encoding='utf-8', separator=';')
 
 def get_street_name(cep):

@@ -5,6 +5,7 @@ __pycache__/
 log_file.log
 app/log_file.log
 credentials.py
+app/*.log
 *.log
 
 app/data/original/*

@@ -1,6 +1,9 @@
 import polars as pl
+import glob
 from thefuzz import fuzz
 from thefuzz import process
+import unidecode
+import ruas_crawler
 
 def process_data(file_path):
   df = pl.read_excel(file_path)
@@ -77,8 +80,18 @@ def validate_street_name(original_street_name, cep_street_name):
 
 
 def fuzzy_find_street_name(address):
-  with open('ceps_db/cidades_cep_unico/' + address['City'] +'.csv') as file:
-    cep_unico = pl.read_csv(file, has_header=False)
+  city = unidecode.unidecode(address['City'].replace(' ', '-').lower())
+  if 'ceps_db/cidades_cep_unico/' + city +'.csv' not in glob.glob('ceps_db/cidades_cep_unico/*.csv'):
+    try:
+      ruas_crawler.get_city_data(city)
+    except:
+      pass
+
+  try:
+    with open('ceps_db/cidades_cep_unico/' + city +'.csv') as file:
+      cep_unico = pl.read_csv(file, has_header=False)
+  except:
+    return ""
 
   street = remove_street_preefix(address['Address line 1'])
 

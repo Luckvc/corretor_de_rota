@@ -44,7 +44,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 Esse robô ainda está em fase de testes, pedimos paciência e qualquer problema entre em contato no /help.
 
-O intuito desse robô é melhorar a roterização de aplicativos como o Circuit, mas notem que podem ocorrer discrepâncias caso o cliente tenha colocado o CEP errado.
+O intuito desse robô é melhorar a roterização de aplicativos como o Circuit.
 
 Para utilizar o robô é só compartilhar a planilha baixada do aplicativo Driver Shopee. Depois abrir a planilha com o Circuit ou aplicativo de sua preferência, eu geralmente seleciono para aparecer as seguintes colunas: Qtd de Pacotes, Número dos pacotes e Complemento.
 

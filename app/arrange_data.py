@@ -4,6 +4,37 @@ from thefuzz import fuzz
 from thefuzz import process
 import unidecode
 import ruas_crawler
+import logging.config
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'formatter': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        },
+    },
+    'handlers': {
+        'console_log': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'formatter',
+            'level': 'INFO',
+        },
+        'log_file': {
+            'class': 'logging.FileHandler',
+            'filename': 'log_file.log',
+            'mode': 'a',
+            'formatter': 'formatter',
+            'level': 'WARNING',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['console_log', 'log_file'],
+        },
+    },
+})
 
 def process_data(file_path):
   df = pl.read_excel(file_path)
@@ -81,14 +112,15 @@ def validate_street_name(original_street_name, cep_street_name):
 
 def fuzzy_find_street_name(address):
   city = unidecode.unidecode(address['City'].replace(' ', '-').lower())
-  if 'ceps_db/cidades_cep_unico/' + city +'.csv' not in glob.glob('ceps_db/cidades_cep_unico/*.csv'):
+  if 'app/ceps_db/cidades_cep_unico/' + city +'.csv' not in glob.glob('app/ceps_db/cidades_cep_unico/*.csv'):
+    logging.log(logging.WARNING, "Raspando dados da cidade:" + city)
     try:
       ruas_crawler.get_city_data(city)
-    except:
-      pass
+    except Exception as e:
+      logging.log(logging.ERROR, "Erro na execução do ruas_crawler com a cidade:" + city + "erro:" + str(e))
 
   try:
-    with open('ceps_db/cidades_cep_unico/' + city +'.csv') as file:
+    with open('app/ceps_db/cidades_cep_unico/' + city +'.csv') as file:
       cep_unico = pl.read_csv(file, has_header=False)
   except:
     return ""

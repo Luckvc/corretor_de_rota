@@ -107,7 +107,7 @@ def validate_street_name(original_street_name, cep_street_name):
   if score > 75:
     return cep_street_name
 
-  return ''
+  return original_street_name
 
 
 def fuzzy_find_street_name(address):
@@ -166,7 +166,7 @@ def aggregate_sequences(sequences):
   return ', '.join(map(str, sequences))
 
 def remove_street_preefix(street_name):
-  filter_out = ['Rua', 'rua', 'Avenida', 'avenida']
+  filter_out = ['Rua', 'rua', 'R', 'R.', 'Av', 'Av.' 'Avenida', 'avenida']
 
   for n in filter_out:
     if street_name.startswith(n + ' '):

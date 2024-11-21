@@ -39,6 +39,10 @@ logging.config.dictConfig({
 def process_data(file_path):
   df = pl.read_excel(file_path)
 
+  if df.columns != ['AT ID', 'Sequence', 'Stop', 'SPX TN', 'Destination Address', 'Bairro', 'City',
+                    'Zipcode/Postal code', 'Latitude', 'Longitude']:
+    raise ValueError("Planilha fora do padrão")
+
   df = df.drop(['Latitude', 'Longitude', 'AT ID', 'Stop'])
 
   df = df.with_columns(

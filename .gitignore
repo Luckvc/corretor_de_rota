@@ -3,14 +3,16 @@ __pycache__/
 *$py.class
 
 log_file.log
+app/log_file.log
 credentials.py
+app/*.log
 *.log
 
-data/original/*
-data/processed/*
+app/data/original/*
+app/data/processed/*
 
-!data/original/.gitkeep 
-!data/processed/.gitkeep 
+!app/data/original/.gitkeep 
+!app/data/processed/.gitkeep 
 
 .idea/
 

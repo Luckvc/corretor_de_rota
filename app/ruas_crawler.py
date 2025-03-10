@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+
 def get_city_data(city_name):
   streets = []
 
@@ -21,4 +22,4 @@ def get_city_data(city_name):
 
   df = pd.DataFrame(streets)
 
-  df.to_csv('ceps_db/cidades_cep_unico/' + city_name + '.csv', header=False, index=False, encoding='utf8')
+  df.to_csv('app/ceps_db/cidades_cep_unico/' + city_name + '.csv', header=False, index=False, encoding='utf8')
